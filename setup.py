@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(name='instacart-log-generator',
 
-version='0.1.2',
+version='0.1.3',
 
 description='Generate fake log based on instacart dataset',
 
@@ -17,7 +17,7 @@ author='ehddnr301',
 
 author_email='dy95032@gmail.com',
 
-url='https://velog.io/@ehddnr',
+url='https://github.com/ehddnr301/instacart-log-generator',
 
 license='MIT',
 
