@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import pkg_resources
 import time
 import numpy as np
-from INFO import REQUEST_URL, BODY, USER_AGENTS, RESPONSE_CODE_WEIGHT_DICT, REQUEST_TYPE_WEIGHT_DICT, DEPARTMENT_CATEGORY
+from instacart_log_generator.INFO import REQUEST_URL, BODY, USER_AGENTS, RESPONSE_CODE_WEIGHT_DICT, REQUEST_TYPE_WEIGHT_DICT, DEPARTMENT_CATEGORY
 
 stream = pkg_resources.resource_stream(__name__, 'sample.npy')
 
@@ -113,5 +113,3 @@ class InstacartLogGenerator:
                 total += v
                 if rand_val <= total:
                     return k
-
-InstacartLogGenerator().logging('a.txt', 1)
