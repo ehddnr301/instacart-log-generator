@@ -4,11 +4,11 @@ import json
 import random
 import socket
 import struct
-from datetime import datetime
+from datetime import datetime, timedelta
 import pkg_resources
 import time
 import numpy as np
-from instacart_log_generator.INFO import REQUEST_URL, BODY, USER_AGENTS, RESPONSE_CODE_WEIGHT_DICT, REQUEST_TYPE_WEIGHT_DICT
+from INFO import REQUEST_URL, BODY, USER_AGENTS, RESPONSE_CODE_WEIGHT_DICT, REQUEST_TYPE_WEIGHT_DICT, DEPARTMENT_CATEGORY
 
 stream = pkg_resources.resource_stream(__name__, 'sample.npy')
 
@@ -20,6 +20,7 @@ class InstacartLogGenerator:
         self.user_agents = USER_AGENTS
         self.response_code = RESPONSE_CODE_WEIGHT_DICT
         self.request_type = REQUEST_TYPE_WEIGHT_DICT
+        self.department_category = DEPARTMENT_CATEGORY
         self.info = np.load(stream, allow_pickle=True)
 
     def write(self, write_path, text):
@@ -52,15 +53,29 @@ class InstacartLogGenerator:
         response_code = self.pick_one(self.response_code)
         request_type = self.pick_one(self.request_type)
 
+        if '#DEPARTMENT#' in url:
+            picked_category = random.choice(self.department_category)
+            url = url.replace('#DEPARTMENT#', picked_category)
+
         self.write(
             write_path,
-            f'{ip} - - [{date}] \"{request_type} {url} HTTP/1.1\" {response_code} \"-\" \"{user_agnet}\"'
+            f'{ip} - - [{date.strftime("%d/%b/%Y:%H:%M:%S +0900")}] \"{request_type} {url} HTTP/1.1\" {response_code} \"-\" \"{user_agnet}\"'
         )
 
-        if request_type == 'POST':
+        if 'login' in url:
+            url = url.replace('login', 'logout')
+            random_minute = timedelta(minutes=random.randrange(1, 1000))
+            logout_date = date + random_minute
             self.write(
                 write_path,
-                f'{ip} - - [{date}] {body}'
+                f'{ip} - - [{logout_date.strftime("%d/%b/%Y:%H:%M:%S +0900")}] \"{request_type} {url} HTTP/1.1\" {response_code} \"-\" \"{user_agnet}\"'
+            )
+            
+
+        if 'order' in url and request_type == 'POST' and response_code == 200:
+            self.write(
+                write_path,
+                f'{ip} - - [{date.strftime("%d/%b/%Y:%H:%M:%S +0900")}] \"{request_type} {url} HTTP/1.1\" {body}'
             )
 
 
@@ -68,7 +83,7 @@ class InstacartLogGenerator:
         return socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff)))
 
     def gen_date(self):
-        return datetime.now().strftime("%d/%b/%Y:%H:%M:%S +0900")
+        return datetime.now()
 
     def gen_random_info(self, body):
         num = np.random.randint(self.info.shape[0])
@@ -98,3 +113,5 @@ class InstacartLogGenerator:
                 total += v
                 if rand_val <= total:
                     return k
+
+InstacartLogGenerator().logging('a.txt', 1)

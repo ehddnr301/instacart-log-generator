@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(name='instacart-log-generator',
 
-version='0.1.3',
+version='0.1.4',
 
 description='Generate fake log based on instacart dataset',
 

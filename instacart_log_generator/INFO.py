@@ -1,8 +1,14 @@
 REQUEST_URL = {
-        "/order": 0.8,
+        "/order": 0.6,
+        "/department/#DEPARTMENT#": 0.2,
         "/login":0.1,
         "/logout":0.1
     }
+
+DEPARTMENT_CATEGORY = ['frozen', 'other', 'bakery', 'produce', 'alcohol', 'international',
+       'beverages', 'pets', 'dry goods pasta', 'bulk', 'personal care',
+       'meat seafood', 'pantry', 'breakfast', 'canned goods',
+       'dairy eggs', 'household', 'babies', 'snacks', 'deli', 'missing']
 
 BODY = {
     "order_id": 0,
